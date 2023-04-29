@@ -4,9 +4,12 @@ import { Model } from "sequelize";
 
 interface UserAttributes {
     id: number;
-    name: string;
+    username: string;
+    first_name: string
+    last_name:string
     email: string;
     password: string;
+    is_active:boolean;
 }
 
 module.exports = (sequelize: any, DataTypes: any) => {
@@ -17,14 +20,17 @@ module.exports = (sequelize: any, DataTypes: any) => {
          * The `models/index` file will call this method automatically.
          */
         id!: number;
-        name!: string;
+        username!: string;
+        first_name!: string;
+        last_name!:string;
         email!: string;
         password!: string;
+        is_active!:boolean;
 
         static associate(models: any) {
-            User.belongsToMany(models.Project, {
-                through: "ProjectAssignments",
-            });
+            // User.belongsToMany(models.Project, {
+            //     through: "ProjectAssignments",
+            // });
         }
     }
     User.init(
@@ -32,21 +38,34 @@ module.exports = (sequelize: any, DataTypes: any) => {
             id: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
-                autoIncrement: true,
                 primaryKey: true,
+                autoIncrement: true,
             },
-            name: {
-                type: DataTypes.STRING,
+            username: {
+                type: DataTypes.STRING(128),
+                allowNull: false,
+                unique: false,
+            },
+            first_name: {
+                type: DataTypes.STRING(128),
+                allowNull: false,
+            },
+            last_name: {
+                type: DataTypes.STRING(128),
                 allowNull: false,
             },
             email: {
-                type: DataTypes.STRING,
+                type: DataTypes.STRING(128),
                 allowNull: false,
                 unique: true,
             },
             password: {
-                type: DataTypes.STRING,
+                type: DataTypes.STRING(256),
                 allowNull: false,
+            },
+            is_active: {
+                type: DataTypes.BOOLEAN(),
+                defaultValue: true,
             },
         },
         {

@@ -33,12 +33,10 @@ class AbstractController {
         const errors = validationResult(req);
 
         if (!errors.isEmpty()) {
-            return res
-                .status(403)
-                .json({
-                    errors: this.formatErrors(errors),
-                    message: "Invalid inputs.",
-                });
+            return res.status(422).json({
+                errors: this.formatErrors(errors),
+                message: "Invalid inputs.",
+            });
         }
     }
 }
