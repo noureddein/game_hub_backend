@@ -6,21 +6,32 @@ import { hashPassword } from "../utils/passwordUtils";
 class UserController extends AbstractController {
     create = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            this.checkErrors(req, res);
+            const errors = this.checkErrors(req, res);
+            if (errors) {
+                return res.status(422).json({
+                    errors,
+                    message: "Invalid inputs.",
+                });
+            }
 
             try {
-                const { firstName, lastName , password} = req.body;
+                const { firstName, lastName, password } = req.body;
                 await db.User.create({
                     ...req.body,
                     first_name: firstName,
                     last_name: lastName,
-                    password: await hashPassword(password)
+                    password: await hashPassword(password),
                 });
                 return res
                     .status(201)
                     .json({ message: "User created successfully." });
             } catch (error: any) {
-                return res.status(409).json({message: 'User already exist!.', fields: error.fields})
+                return res
+                    .status(409)
+                    .json({
+                        message: "User already exist!.",
+                        fields: error.fields,
+                    });
             }
         } catch (error) {
             next(error);

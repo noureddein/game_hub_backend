@@ -23,7 +23,12 @@ class AbstractController {
             const errorsPerKey = err.errors.filter(
                 ({ path }: Error) => path === key
             );
-            obj = [...obj, { [key]: errorsPerKey }];
+            obj = [
+                ...obj,
+                {
+                    [key]: errorsPerKey.map((err:Error) => err.msg)
+                },
+            ];
         }
 
         return obj;
@@ -33,11 +38,9 @@ class AbstractController {
         const errors = validationResult(req);
 
         if (!errors.isEmpty()) {
-            return res.status(422).json({
-                errors: this.formatErrors(errors),
-                message: "Invalid inputs.",
-            });
+            return this.formatErrors(errors);
         }
+        return null;
     }
 }
 
