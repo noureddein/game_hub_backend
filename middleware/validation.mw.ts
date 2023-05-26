@@ -1,5 +1,6 @@
 ﻿import { NextFunction, Request, Response } from "express";
 import { validationResult } from "express-validator";
+import logger from "../services/logger";
 
 interface Error {
     type: string;
@@ -9,7 +10,12 @@ interface Error {
     location: string;
 }
 
-class AbstractController {
+class ValidationMiddleware {
+    constructor() {
+        this.formatErrors = this.formatErrors.bind(this);
+        this.checkErrors = this.checkErrors.bind(this);
+    }
+
     private formatErrors(err: any) {
         let obj: { [x: string]: Error }[] = [];
 
@@ -26,22 +32,27 @@ class AbstractController {
             obj = [
                 ...obj,
                 {
-                    [key]: errorsPerKey.map((err:Error) => err.msg)
+                    [key]: errorsPerKey.map((err: Error) => err.msg),
                 },
             ];
         }
 
         return obj;
     }
-
-    checkErrors(req: Request, res: Response) {
+    checkErrors(req: Request, res: Response, next: NextFunction) {
         const errors = validationResult(req);
 
         if (!errors.isEmpty()) {
-            return this.formatErrors(errors);
+            return res.status(422).json({
+                errors: this.formatErrors(errors),
+                message: "Invalid inputs.",
+            });
         }
-        return null;
+
+        next();
     }
 }
 
-export default AbstractController;
+const validationMiddleware = new ValidationMiddleware();
+
+export default validationMiddleware;

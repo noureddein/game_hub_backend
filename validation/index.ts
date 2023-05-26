@@ -1,5 +1,5 @@
-﻿import user from './user'
-import auth from './auth'
+﻿import user from './user.vald.'
+import auth from './auth.vald'
 const validation ={
     user,
     auth

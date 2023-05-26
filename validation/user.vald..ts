@@ -1,4 +1,4 @@
-﻿import { body } from "express-validator";
+﻿import { body, param, header } from "express-validator";
 
 const isPasswordMatch = (password: string, confirmedPassword: string) => {
     if (password !== confirmedPassword)
@@ -57,8 +57,19 @@ const register = [
     ),
 ];
 
+const profile = [
+    param("id")
+        .exists()
+        .withMessage("Param not exist!")
+        .isNumeric()
+        .withMessage("Param id must be number!")
+        .isInt()
+        .withMessage("Param id must be an integer number!"),
+];
+
 const user = {
     register,
+    profile,
 };
 
 export default user;

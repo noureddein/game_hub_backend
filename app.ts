@@ -11,7 +11,7 @@ db.sequelize.sync({ focus: true }).then(() => {
     logger.INFO("Database synced!");
     startServer();
 });
-
+// Seeders 
 createUsers();
 
 
